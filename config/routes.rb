@@ -1,8 +1,23 @@
 SampleApp::Application.routes.draw do
-  get "pages/home"
+  #get "users/new"
 
-  get "pages/contact"
-get "pages/about"
+root :to => 'pages#home'
+
+resources :users
+resources :sessions, only: [:new, :create, :destroy]
+
+  match '/signup',  to: 'users#new'
+  match '/signin',  to: 'sessions#new'
+  match '/signout', to: 'sessions#destroy', via: :delete 
+  #via: :delete, indicated that it should be invoked using an HTTP DELETE request.
+  
+  match '/home',    to: 'pages#home'
+  match '/help',    to: 'pages#help'
+  match '/about',   to: 'pages#about'
+  match '/contact', to: 'pages#contact'
+  
+
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
