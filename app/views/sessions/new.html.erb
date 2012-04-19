@@ -12,7 +12,9 @@
 
       <%= f.label :password %>
       <%= f.password_field :password %>
-
+	  <label class="checkbox"> <%= f.check_box :public_flag %> Make my profile public
+	  </label>
+	  
       <%= f.submit "Sign in", class: "btn btn-large btn-primary" %>
     <% end %>
 
