@@ -1,6 +1,6 @@
 <% provide(:title, @user.name) %>
 <div class="row">
-  <aside class="span4">
+  <aside class="span7">
     <section>
       <h1>
         <%= gravatar_for @user %>
@@ -8,6 +8,24 @@
       </h1>
     </section>
   </aside>
+
+<div class="span3  hero-unit">
+
+<%= @user.name %>
+<br />
+<%= @user.email %>
+<br />
+<strong>URL</strong>  <%= link_to user_path(@user), @user %>
+<br />
+<hr>
+<strong>Last Account Activity:</strong> 
+<br />
+<%= @user.updated_at %>
+<br />
+
+<%= pluralize((((Time.now) - (@user.updated_at)) / 3600).round(0), "hour") %> ago
+
 </div>
 
-<%= @user.name %>, <%= @user.email %>
+</div>
+

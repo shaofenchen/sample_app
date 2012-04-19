@@ -2,11 +2,16 @@ module SessionsHelper
 #modules are available in both controllers and views
 
   def sign_in(user)
-    cookies.permanent[:remember_token] = user.remember_token
-	#equal to 
-	#cookies[:remember_token] = { value:   user.remember_token,
-    #                           expires: 20.years.from_now.utc }
-	
+    if params[:remember_me]
+		cookies.permanent[:remember_token] = user.remember_token
+		#equal to 
+		#cookies[:remember_token] = { value:   user.remember_token,
+		#                           expires: 20.years.from_now.utc }
+    else
+		cookies[:remember_token] = user.remember_token
+    end
+
+	user.touch
     current_user = user
   end
   
