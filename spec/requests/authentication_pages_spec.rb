@@ -68,11 +68,12 @@ describe "Authentication" do
           specify { response.should redirect_to(signin_path) }
         end
       
-	    describe "visiting the user index" do
-          before { visit users_path }
-          it { should have_selector('title', text: 'Sign in') }
-        end
-	  end
+	  #this test no longer valid, replaced by "viewing user list" test
+	    # describe "visiting the user index" do
+          # before { visit users_path }
+          # it { should have_selector('title', text: 'Sign in') }
+        # end
+	   end
 
       describe "when attempting to visit a protected page" do
         before do
@@ -88,8 +89,7 @@ describe "Authentication" do
             page.should have_selector('title', text: 'Edit user')
           end
         end
-      end	  
-	  
+      end	  	  
     end
 
 	#
@@ -141,13 +141,13 @@ describe "Authentication" do
       describe "as a non-signed-in users" do
 	  
 		  describe "view the public profile successfully" do
-			before { visit public_user(public_user) }
+			before { visit user_path(public_user) }
 			it { should have_selector('h1',    text: public_user.name) }
 			it { should have_selector('title', text: public_user.name) } 
 		  end
 		  
   		  describe "but can not view the private profile" do
-			before { visit public_user(private_user) }
+			before { visit user_path(private_user) }
 			it { should have_selector('title', text: 'Sign in') }  
 		  end
       end
@@ -156,24 +156,22 @@ describe "Authentication" do
 		before { sign_in user }
 		describe "view the public profile successfully" do
 			before { visit user_path(public_user) }
-			it { should have_selector('h1',    text: user.name) }
-			it { should have_selector('title', text: user.name) }
+			it { should have_selector('h1',    text: public_user.name) }
+			it { should have_selector('title', text: public_user.name) }
 		end
 
 		describe "view the private profile successfully" do
 			before { visit user_path(private_user) }
-			it { should have_selector('h1',    text: user.name) }
-			it { should have_selector('title', text: user.name) }
+			it { should have_selector('h1',    text: private_user.name) }
+			it { should have_selector('title', text: private_user.name) }
 		end
-		
-      end
-	  
+      end	  
     end
 	
     describe "viewing user list" do
       let(:user) { FactoryGirl.create(:user) }
-      before(:all) { 30.times { FactoryGirl.create(:user, public_flag: true) } }
-	  before(:all) { 29.times { FactoryGirl.create(:user) } }
+      before(:all) { 15.times { FactoryGirl.create(:user, public_flag: true) } }
+	  before(:all) { 14.times { FactoryGirl.create(:user) } }
 	  after(:all)  { User.delete_all }
 	  
       #before { sign_in user }
@@ -183,17 +181,16 @@ describe "Authentication" do
 		  describe "all the profile except private ones should be display" do
 			before { visit users_path }
 			  it "should list each public user" do
-				User.find_all_by_public_flag(true)[0..29].each do |user|
+				User.find_all_by_public_flag(true)[0..14].each do |user|
 				  page.should have_selector('li', text: user.name)
 				end
 			  end
 			  
 			  it "should not list any private user" do
-				User.find_all_by_public_flag(false)[0..29].each do |user|
+				User.find_all_by_public_flag(false)[0..13].each do |user|
 				  page.should_not have_selector('li', text: user.name)
 				end
-			  end			  
-			  
+			  end			  			  
 		  end
       end
 	  
@@ -202,23 +199,18 @@ describe "Authentication" do
 		  describe "all the profile should be display" do
 			before { visit users_path }
 			  it "should list each public user" do
-				User.find_all_by_public_flag(true)[0..29].each do |user|
+				User.find_all_by_public_flag(true)[0..14].each do |user|
 				  page.should have_selector('li', text: user.name)
 				end
 			  end
 			  
 			  it "should list each private user" do
-				User.find_all_by_public_flag(false)[0..29].each do |user|
+				User.find_all_by_public_flag(false)[0..13].each do |user|
 				  page.should have_selector('li', text: user.name)
 				end
 			  end			  
-			  
 		  end
       end
-	  
     end
-
-
-	
   end
 end

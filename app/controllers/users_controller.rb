@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:index, :edit, :update]
+  before_filter :signed_in_user, only: [:edit, :update]
   before_filter :correct_user,   only: [:edit, :update]
   before_filter :admin_user,     only: :destroy
 #request	URI				Action		Named route				Purpose
@@ -13,12 +13,21 @@ class UsersController < ApplicationController
 #DELETE		/users/1		destroy		user_path(user)			delete user with id 1
 
   def index
-    @users = User.paginate(page: params[:page])
+    if signed_in?
+		@users = User.paginate(page: params[:page])
+		#show all users
+	else
+		@users = User.find_all_by_public_flag(true).paginate(page: params[:page])
+		#show only public users
+	end
   end
 
 
   def show
-    @user = User.find(params[:id])
+	if !public_user?
+	  signed_in_user
+	end
+	
 	#local variable is only available in controller, 
 	#where as instance variable is available in corresponding views also
 	
@@ -26,7 +35,6 @@ class UsersController < ApplicationController
 	#where as instance available to another
 	
 	#instance variable is separate for each object
-	
   end
   
   def new
@@ -86,4 +94,10 @@ class UsersController < ApplicationController
     def admin_user
       redirect_to(root_path) unless current_user.admin?
     end
+	
+	def public_user?
+	  @user = User.find(params[:id])
+	  @user.public_flag?
+	end
+	
 end
